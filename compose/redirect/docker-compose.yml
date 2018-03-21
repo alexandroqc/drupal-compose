@@ -1,0 +1,16 @@
+version: '3'
+services:
+  nginx-redirect-www:
+    image: schmunk42/nginx-redirect
+    networks:
+      - reverse-proxy 
+    environment:
+      - SERVER_REDIRECT=www.nucleognulinux.org
+      - VIRTUAL_HOST=nucleognulinux.org
+      - LETSENCRYPT_HOST=nucleognulinux.org
+      - LETSENCRYPT_EMAIL=alexandro@autistici.org
+      - SERVER_REDIRECT_SCHEME=https
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy

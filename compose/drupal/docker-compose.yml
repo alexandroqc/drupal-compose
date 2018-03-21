@@ -1,0 +1,49 @@
+version: '3.1'
+
+services:
+
+  drupal:
+    image: drupal:8.5-apache
+    #      ports:
+    #        - 20:20
+    #      - 465:465
+    networks:
+      - reverse-proxy
+      - back
+    volumes:
+      - drupal-modules:/var/www/html/modules
+      - drupal-profiles:/var/www/html/profiles
+      - drupal-themes:/var/www/html/themes
+      # this takes advantage of the feature in Docker that a new anonymous
+      # volume (which is what we're creating here) will be initialized with the
+      # existing content of the image at the same location
+      - drupal-sites:/var/www/html/sites
+    restart: always
+    environment:
+            #      - VIRTUAL_PORT=1234
+      - VIRTUAL_HOST=www.nucleognulinux.org
+      - LETSENCRYPT_HOST=www.nucleognulinux.org
+      - LETSENCRYPT_EMAIL=alexandro@autistici.org
+
+
+  postgres:
+    image: postgres:10
+    networks:
+      - back
+    environment:
+      POSTGRES_PASSWORD: dockerbirthday
+    restart: always
+    volumes:
+      - pgdata-drupal:/var/lib/postgresql/data
+networks:
+  reverse-proxy:
+    external:
+      name: reverse-proxy
+  back:
+    driver: bridge 
+volumes:
+  pgdata-drupal:
+  drupal-modules:
+  drupal-profiles:
+  drupal-themes:
+  drupal-sites:
